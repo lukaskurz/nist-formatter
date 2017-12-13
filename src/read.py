@@ -1,12 +1,29 @@
 import os
+import myshutil
 
-def getDirectories(name):
-    return [i for i in next(os.walk(name))[1]]
+print(os.getcwd())
+os.chdir("./../nist/by_class")
+print(os.getcwd())
+print(os.listdir("./30"))
 
+alphabet = os.listdir()
+count = 0
+finished = True
+for letter in alphabet:
+    directory = "./"+letter
+    print(directory)
+    os.chdir(directory)
+    if os.path.exists("train"):
+        myshutil.rmtree("train")
+    #if os.path.exists("test"):
+    #    myshutil.rmtree("test")
+    fromPath = "./train_"+letter
+    toPath = "./train"
+    print("from {} to {}".format(fromPath,toPath))
+    
+    myshutil.copytree(fromPath, toPath)
 
-
-for directory in getDirectories("./../nist/by_class"):
-    for file in getDirectories("./../nist/by_class/{}".format(directory)):
-        if file.startswith("train"):
-            print(file)
+    
+    os.chdir("..")
+    
 
