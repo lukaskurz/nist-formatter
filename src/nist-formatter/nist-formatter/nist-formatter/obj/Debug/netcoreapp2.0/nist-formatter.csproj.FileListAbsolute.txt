@@ -1,0 +1,11 @@
+C:\Github\nist-classificator\src\nist-formatter\nist-formatter\nist-formatter\bin\Debug\netcoreapp2.0\nist-formatter.deps.json
+C:\Github\nist-classificator\src\nist-formatter\nist-formatter\nist-formatter\bin\Debug\netcoreapp2.0\nist-formatter.runtimeconfig.json
+C:\Github\nist-classificator\src\nist-formatter\nist-formatter\nist-formatter\bin\Debug\netcoreapp2.0\nist-formatter.runtimeconfig.dev.json
+C:\Github\nist-classificator\src\nist-formatter\nist-formatter\nist-formatter\bin\Debug\netcoreapp2.0\nist-formatter.dll
+C:\Github\nist-classificator\src\nist-formatter\nist-formatter\nist-formatter\bin\Debug\netcoreapp2.0\nist-formatter.pdb
+C:\Github\nist-classificator\src\nist-formatter\nist-formatter\nist-formatter\obj\Debug\netcoreapp2.0\nist-formatter.csprojResolveAssemblyReference.cache
+C:\Github\nist-classificator\src\nist-formatter\nist-formatter\nist-formatter\obj\Debug\netcoreapp2.0\nist-formatter.csproj.CoreCompileInputs.cache
+C:\Github\nist-classificator\src\nist-formatter\nist-formatter\nist-formatter\obj\Debug\netcoreapp2.0\nist-formatter.AssemblyInfoInputs.cache
+C:\Github\nist-classificator\src\nist-formatter\nist-formatter\nist-formatter\obj\Debug\netcoreapp2.0\nist-formatter.AssemblyInfo.cs
+C:\Github\nist-classificator\src\nist-formatter\nist-formatter\nist-formatter\obj\Debug\netcoreapp2.0\nist-formatter.dll
+C:\Github\nist-classificator\src\nist-formatter\nist-formatter\nist-formatter\obj\Debug\netcoreapp2.0\nist-formatter.pdb

@@ -1,29 +1,23 @@
 import os
 import myshutil
+import sys
 
-print(os.getcwd())
+abspath = os.path.abspath(__file__)
+dname = os.path.dirname(abspath)
+os.chdir(dname)
 os.chdir("./../nist/by_class")
-print(os.getcwd())
-print(os.listdir("./30"))
 
 alphabet = os.listdir()
-count = 0
 finished = True
-for letter in alphabet:
-    directory = "./"+letter
-    print(directory)
-    os.chdir(directory)
-    if os.path.exists("train"):
-        myshutil.rmtree("train")
-    #if os.path.exists("test"):
-    #    myshutil.rmtree("test")
-    fromPath = "./train_"+letter
-    toPath = "./train"
-    print("from {} to {}".format(fromPath,toPath))
-    
-    myshutil.copytree(fromPath, toPath)
-
-    
-    os.chdir("..")
-    
-
+count = 0
+complete = 731668
+while True:
+    finished = True
+    for letter in alphabet:
+        images = os.listdir("{}/train_{}".format(letter, letter))
+        if(len(images) > count):
+            print(images[count])
+            finished = False
+    if(finished):
+        break
+    count += 1
