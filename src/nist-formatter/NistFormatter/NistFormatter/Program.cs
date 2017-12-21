@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 
@@ -14,14 +15,13 @@ namespace NistFormatter
 			foreach (var directory in directories)
 			{
 				var trainDirectory = Directory.GetDirectories(directory).Where(text => text.Split('\\').Last().StartsWith("train_")).First();
+				var letter = ((char)Int16.Parse(trainDirectory.Split('_').Last(), NumberStyles.AllowHexSpecifier)).ToString();
 				foreach (var file in Directory.GetFiles(trainDirectory))
 				{
 					Console.WriteLine(file);
+
 					Bitmap bmp = new Bitmap(file);
-
-					ResizeImage(bmp,new Size()); 
-
-					Console.WriteLine($"{bmp.Width}x{bmp.Height}");
+					Bitmap resized = new Bitmap(ResizeImage(bmp,new Size(32,32)));
 				}
 			}
 			Console.ReadKey();
