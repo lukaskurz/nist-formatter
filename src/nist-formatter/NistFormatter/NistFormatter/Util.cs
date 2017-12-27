@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -54,6 +55,21 @@ namespace NistFormatter
 			}
 
 			return result;
+		}
+		private static Random rng = new Random();
+		public static void Shuffle<T>(this IList<T> list)
+		{
+			int n = list.Count;
+			Console.ForegroundColor = ConsoleColor.Yellow;
+			while (n > 1)
+			{
+				n--;
+				int k = rng.Next(n + 1);
+				T value = list[k];
+				list[k] = list[n];
+				list[n] = value;
+				Console.WriteLine((100.0-((float)n/(float)list.Count*100.0)).ToString());
+			}
 		}
 	}
 }
