@@ -12,7 +12,12 @@ namespace NistFormatter
 	{
 		static void Main(string[] args)
 		{
-			AggregateAllFiles();
+			var directories = Directory.GetDirectories(@".\..\..\..\..\..\..\nist\by_class");
+			foreach (var directory in directories)
+			{
+				Console.Write($"\"{directory.Split('\\').Last()}\",");
+			}
+			Console.ReadKey();
 		}
 
 		static void DeleteSummaries()
