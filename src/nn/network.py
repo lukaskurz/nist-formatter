@@ -1,6 +1,7 @@
 import numpy
 import scipy.special
 import matplotlib.pyplot as plt
+import os
 
 
 class network:
@@ -40,7 +41,24 @@ class network:
         return bytearray.fromhex(self.symbols[biggest]).decode()
 
 
-test = network()
-res = test.predict(numpy.random.random_sample((32 * 32)))
-plt.plot(numpy.round(res, 2))
+fp = open("C:/Github/nist-classificator/nist/by_class/output_0.csv")
+content = fp.read()
+lines = content.split("\n")
+# for line in lines:
+#     elements = line.split(";")
+#     pixels = numpy.asarray(elements[1].split(","))
+#     pixel2d = numpy.reshape(pixels, (32, 32))
+#     plt.imshow(pixel2d, cmap='Greys', interpolation='None')
+
+elements = lines[0].split(";")
+pixels = numpy.asarray(elements[1].split(","))
+pixel2d = numpy.reshape(pixels, (32, 32))
+pixel2d = numpy.divide(pixel2d, 255.0)
+plt.imshow(pixel2d, cmap='Greys', interpolation='None')
 plt.show()
+
+
+# test = network()
+# res = test.predict(numpy.random.random_sample((32 * 32)))
+# plt.plot(res)
+# plt.show()

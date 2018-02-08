@@ -1,0 +1,7 @@
+C:\Github\nist-classificator\src\nist-formatter\NistFormatter\NistFormatter\bin\Release\NistFormatter.exe.config
+C:\Github\nist-classificator\src\nist-formatter\NistFormatter\NistFormatter\bin\Release\NistFormatter.exe
+C:\Github\nist-classificator\src\nist-formatter\NistFormatter\NistFormatter\bin\Release\NistFormatter.pdb
+C:\Github\nist-classificator\src\nist-formatter\NistFormatter\NistFormatter\obj\Release\NistFormatter.csproj.CoreCompileInputs.cache
+C:\Github\nist-classificator\src\nist-formatter\NistFormatter\NistFormatter\obj\Release\NistFormatter.exe
+C:\Github\nist-classificator\src\nist-formatter\NistFormatter\NistFormatter\obj\Release\NistFormatter.pdb
+C:\Github\nist-classificator\src\nist-formatter\NistFormatter\NistFormatter\obj\Release\NistFormatter.csprojResolveAssemblyReference.cache
