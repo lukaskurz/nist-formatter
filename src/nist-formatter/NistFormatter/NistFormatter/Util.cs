@@ -42,16 +42,16 @@ namespace NistFormatter
 		public static string Normalize(this Bitmap bmp)
 		{
 			string result = "";
-			for (int x = 0; x < bmp.Width; x++)
+			for (int y = 0; y < bmp.Height; y++)
 			{
-				for (int y = 0; y < bmp.Height; y++)
+				for (int x = 0; x < bmp.Width; x++)
 				{
-					var pixel = bmp.GetPixel(x, y);
+					var pixel = bmp.GetPixel(y, x);
 					var grayscale = 0.2126 * pixel.R + 0.7152 * pixel.G + 0.0722 * pixel.B;
 					result += grayscale.ToString();
-					if (y + 1 < bmp.Height) result += ",";
+					if (x + 1 < bmp.Width) result += ",";
 				}
-				if (x + 1 < bmp.Width) result += ",";
+				if (y + 1 < bmp.Height) result += ",";
 			}
 
 			return result;
@@ -68,7 +68,7 @@ namespace NistFormatter
 				T value = list[k];
 				list[k] = list[n];
 				list[n] = value;
-				Console.WriteLine((100.0-((float)n/(float)list.Count*100.0)).ToString());
+				Console.WriteLine((100.0 - ((float)n / (float)list.Count * 100.0)).ToString());
 			}
 		}
 	}
