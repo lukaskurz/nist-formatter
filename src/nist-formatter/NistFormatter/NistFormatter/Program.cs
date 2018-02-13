@@ -12,14 +12,7 @@ namespace NistFormatter
 	{
 		static void Main(string[] args)
 		{
-			Console.WriteLine(Directory.GetCurrentDirectory());
-			var directories = Directory.GetDirectories(@".\..\..\..\..\..\..\nist\by_class");
-			foreach (var directory in directories)
-			{
-				Console.Write($"\"{directory.Split('\\').Last()}\",");
-			}
-
-			AggregateAllFiles();
+			AggregateAllFiles(5000);
 
 			Console.ReadKey();
 		}
@@ -79,7 +72,6 @@ namespace NistFormatter
 				var normalized = resized.Normalize();
 
 				sout.WriteLine($"{name.Split('\\').Last().Split('_')[1]};{normalized};");
-				Console.Clear();
 				Console.WriteLine(((float)i / (float)max * 100).ToString());
 			}
 			Console.ReadKey();
