@@ -16,45 +16,24 @@ class network:
     def __init__(self, inputlayer_size, hiddenlayer_size, outputlayer_size=len(symbols)):
         self.input_hidden = numpy.random.normal(0, pow(hiddenlayer_size, -0.5), (inputlayer_size, hiddenlayer_size))
         self.hidden_output = numpy.random.normal(0, pow(outputlayer_size, -0.5), (hiddenlayer_size, outputlayer_size))
-        # Graphs for the weights
-        plt.title("Weights from input to hidden")
-        plt.plot(self.input_hidden)
-        plt.show()
-        plt.title("Weights from hidden to output")
-        plt.plot(self.hidden_output)
-        plt.show()
 
     def train(self, start=[], target=[]):
         output = self.predict(start)
         error = numpy.subtract(target, output)
+        error = numpy.power(error, 2)
+
+
+
         return error
 
     def predict(self, start=[]):
         """Tries to predict from an image converted to an float array.
         Returns the prediction array"""
-        plt.title("Input data")
-        plt.plot(start)
-        plt.show()
-        start = expit(start)
-        plt.title("Input data after expit")
-        plt.plot(start)
-        plt.show()
+        # start = expit(start)
         start = numpy.dot(start, self.input_hidden)
-        plt.title("Hidden layer data")
-        plt.plot(start)
-        plt.show()
         start = expit(start)
-        plt.title("Hidden layer data after expit")
-        plt.plot(start)
-        plt.show()
         start = numpy.dot(start, self.hidden_output)
-        plt.title("Output layer data")
-        plt.plot(start)
-        plt.show()
         start = expit(start)
-        plt.title("Output layer data after expit")
-        plt.plot(start)
-        plt.show()
 
         return start
 
@@ -87,4 +66,5 @@ for line in lines:
     plt.title("Result from prediction")
     plt.plot(output)
     plt.show()
+    print(test.unmapsymbol(output))
     break
