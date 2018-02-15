@@ -12,7 +12,7 @@ namespace NistFormatter
 	{
 		static void Main(string[] args)
 		{
-			AggregateAllFiles(5000);
+			AggregateAllFiles();
 
 			Console.ReadKey();
 		}

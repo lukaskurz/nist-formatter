@@ -20,6 +20,7 @@ class network:
         self.learningrate = learningrate
 
     def train(self, start=[], target=[]):
+
         # Current prediction
         input_hidden_result = expit(numpy.dot(start, self.input_hidden))
         hidden_output_result = expit(numpy.dot(input_hidden_result, self.hidden_output))
@@ -27,48 +28,64 @@ class network:
         hidden_output_error = numpy.subtract(target, hidden_output_result)
         input_hidden_error = numpy.dot(hidden_output_error, self.hidden_output.T)
 
-        #here is errore hidden. find it!
         self.hidden_output += self.learningrate * numpy.dot(
-            numpy.transpose(input_hidden_result),
-            hidden_output_error * hidden_output_result * (1.0 - hidden_output_result))
+            input_hidden_result[:, None],
+            hidden_output_error[None, :] * hidden_output_result[None, :] * (1.0 - hidden_output_result[None, :]))
+
+        self.input_hidden += self.learningrate * numpy.dot(
+            start[:, None],
+            (input_hidden_error[None, :] * input_hidden_result[None, :] * (1.0 - input_hidden_result[None, :])))
 
     def predict(self, start=[]):
         """Tries to predict from an image converted to an float array.
         Returns the prediction array"""
-        # start = expit(start)
-        start = numpy.dot(start, self.input_hidden)
-        start = expit(start)
-        start = numpy.dot(start, self.hidden_output)
-        start = expit(start)
+        input_hidden_result = expit(numpy.dot(start, self.input_hidden))
+        hidden_output_result = expit(numpy.dot(input_hidden_result, self.hidden_output))
 
-        return start
+        return hidden_output_result
 
     def mapsymbol(self, symbol):
         """Maps an ascii char to result array"""
-        for i in range(len(self.symbols)):
-            if bytearray.fromhex(self.symbols[i]).decode() == symbol:
+        for index in range(len(self.symbols)):
+            if bytearray.fromhex(self.symbols[index]).decode() == symbol:
                 target = numpy.zeros(len(self.symbols))
-                target[i] = 1
+                target[index] = 1
                 return target
         raise ValueError("Tried to map a char that does not exist in the symbols entries")
 
     def unmapsymbol(self, result=[]):
         """Maps the result array to an ascii char"""
         biggest = 0
-        for i in range(len(result)):
-            if result[i] > result[biggest]:
-                biggest = i
+        for index in range(len(result)):
+            if result[index] > result[biggest]:
+                biggest = index
         return bytearray.fromhex(self.symbols[biggest]).decode()
+
+    def save(self, path = "save.txt"):
 
 
 fp = open("C:/Github/nist-classificator/nist/by_class/output_0.csv")
 content = fp.read()
 lines = content.split("\n")
-test = network(0.1, 64 * 64, 1000)
-for line in lines:
+test = network(0.1, 64 * 64, 200)
+for i in range(len(lines) - 1):
+    line = lines[i]
     splitted = line.split(";")
     correctResult = bytearray.fromhex(splitted[0]).decode()
     input_data = numpy.asfarray(splitted[1].split(",")) / 255 * 0.99
     input_data += 0.01
+    input_data -= 1.0
+    input_data *= -1
     test.train(input_data, test.mapsymbol(correctResult))
-    break
+
+for i in range(100):
+    splitted = lines[i].split(";")
+    correctResult = bytearray.fromhex(splitted[0]).decode()
+    input_data = numpy.asfarray(splitted[1].split(",")) / 255 * 0.99
+    input_data += 0.01
+    input_data -= 1.0
+    input_data *= -1
+    res = test.predict(input_data)
+    plt.title("Correct:" + correctResult + " Prediction:" + test.unmapsymbol(res))
+    plt.plot(res)
+    plt.show()
