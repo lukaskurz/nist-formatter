@@ -61,14 +61,34 @@ class network:
                 biggest = index
         return bytearray.fromhex(self.symbols[biggest]).decode()
 
-    def save(self, path = "save.txt"):
+    def save(self, path="save.txt"):
+        fp = open(path, mode="w")
+        fp.write("name;size;weight;weight;weight;weight\n")
+
+        fp.write("input_hidden;" + str(self.input_hidden.shape))
+        weights = numpy.ndarray.flatten(self.input_hidden)
+        for index in range(len(weights)):
+            fp.write(";" + str(weights[index]))
+        fp.write("\n")
+
+        fp.write("input_hidden;" + str(self.input_hidden.shape))
+        weights = numpy.ndarray.flatten(self.input_hidden)
+        for index in range(len(weights)):
+            fp.write(";" + str(weights[index]))
+
+    def import_weights(self, path="save.txt"):
+        fp = open(path, "r")
+        lines = fp.read().split("\n")
+        elements_ih = lines[1].split(";")
+        weights = numpy.asfarray(elements_ih[2:])
 
 
 fp = open("C:/Github/nist-classificator/nist/by_class/output_0.csv")
 content = fp.read()
 lines = content.split("\n")
-test = network(0.1, 64 * 64, 200)
-for i in range(len(lines) - 1):
+test = network(0.1, 64 * 64, 100)
+# for i in range(len(lines) - 1):
+for i in range(1000):
     line = lines[i]
     splitted = line.split(";")
     correctResult = bytearray.fromhex(splitted[0]).decode()
@@ -78,14 +98,16 @@ for i in range(len(lines) - 1):
     input_data *= -1
     test.train(input_data, test.mapsymbol(correctResult))
 
-for i in range(100):
-    splitted = lines[i].split(";")
-    correctResult = bytearray.fromhex(splitted[0]).decode()
-    input_data = numpy.asfarray(splitted[1].split(",")) / 255 * 0.99
-    input_data += 0.01
-    input_data -= 1.0
-    input_data *= -1
-    res = test.predict(input_data)
-    plt.title("Correct:" + correctResult + " Prediction:" + test.unmapsymbol(res))
-    plt.plot(res)
-    plt.show()
+test.save()
+
+# for i in range(100):
+#     splitted = lines[i].split(";")
+#     correctResult = bytearray.fromhex(splitted[0]).decode()
+#     input_data = numpy.asfarray(splitted[1].split(",")) / 255 * 0.99
+#     input_data += 0.01
+#     input_data -= 1.0
+#     input_data *= -1
+#     res = test.predict(input_data)
+#     plt.title("Correct:" + correctResult + " Prediction:" + test.unmapsymbol(res))
+#     plt.plot(res)
+#     plt.show()
