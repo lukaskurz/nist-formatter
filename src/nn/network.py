@@ -2,6 +2,7 @@ import numpy
 from scipy.special import expit
 import matplotlib.pyplot as plt
 import os
+import os.path
 
 
 class network:
@@ -62,33 +63,55 @@ class network:
         return bytearray.fromhex(self.symbols[biggest]).decode()
 
     def save(self, path="save.txt"):
-        fp = open(path, mode="w")
-        fp.write("name;size;weight;weight;weight;weight\n")
+        if os.path.isfile(path):
+            os.remove(path)
 
-        fp.write("input_hidden;" + str(self.input_hidden.shape))
+        fp = open(path, mode="w")
+        fp.write("name;size,size;weight;weight;weight;weight\n")
+
+        fp.write("input_hidden;" + str(len(self.input_hidden[0:])) + "," + str(len(self.input_hidden[0][0:])))
         weights = numpy.ndarray.flatten(self.input_hidden)
         for index in range(len(weights)):
             fp.write(";" + str(weights[index]))
         fp.write("\n")
 
-        fp.write("input_hidden;" + str(self.input_hidden.shape))
-        weights = numpy.ndarray.flatten(self.input_hidden)
+        fp.write("hidden_output;" + str(len(self.hidden_output[0:])) + "," + str(len(self.hidden_output[0][0:])))
+        weights = numpy.ndarray.flatten(self.hidden_output)
         for index in range(len(weights)):
             fp.write(";" + str(weights[index]))
+        fp.flush()
+        fp.close()
 
     def import_weights(self, path="save.txt"):
+        if not os.path.isfile(path):
+            return
+
         fp = open(path, "r")
         lines = fp.read().split("\n")
+
         elements_ih = lines[1].split(";")
         weights = numpy.asfarray(elements_ih[2:])
+        dimensions = elements_ih[1].split(",")
+        weights = weights.reshape((int(dimensions[0]), int(dimensions[1])))
+        self.input_hidden = weights
+
+        elements_ho = lines[2].split(";")
+        weights = numpy.asfarray(elements_ho[2:])
+        dimensions = elements_ho[1].split(",")
+        weights = weights.reshape((int(dimensions[0]), int(dimensions[1])))
+        self.hidden_output = weights
+        fp.flush()
+        fp.close()
 
 
-fp = open("C:/Github/nist-classificator/nist/by_class/output_0.csv")
+fp = open("C:/Github/nist-classificator/nist/by_class/output_600000.csv")
 content = fp.read()
 lines = content.split("\n")
-test = network(0.1, 64 * 64, 100)
-# for i in range(len(lines) - 1):
-for i in range(1000):
+test = network(0.1, 64 * 64, 500)
+test.import_weights()
+for i in range(49990):
+    if i % 20 == 0:
+        print(i)
     line = lines[i]
     splitted = line.split(";")
     correctResult = bytearray.fromhex(splitted[0]).decode()
@@ -98,9 +121,11 @@ for i in range(1000):
     input_data *= -1
     test.train(input_data, test.mapsymbol(correctResult))
 
+fp.flush()
+fp.close()
 test.save()
 
-# for i in range(100):
+# for i in range(10):
 #     splitted = lines[i].split(";")
 #     correctResult = bytearray.fromhex(splitted[0]).decode()
 #     input_data = numpy.asfarray(splitted[1].split(",")) / 255 * 0.99
@@ -111,3 +136,17 @@ test.save()
 #     plt.title("Correct:" + correctResult + " Prediction:" + test.unmapsymbol(res))
 #     plt.plot(res)
 #     plt.show()
+
+correct = 0.0
+for i in range(1000):
+    splitted = lines[i].split(";")
+    correctResult = bytearray.fromhex(splitted[0]).decode()
+    input_data = numpy.asfarray(splitted[1].split(",")) / 255 * 0.99
+    input_data += 0.01
+    input_data -= 1.0
+    input_data *= -1
+    res = test.predict(input_data)
+
+    if correctResult == test.unmapsymbol(res):
+        correct += 1.0
+print("Performance p: " + str(float(correct / 1000)))
