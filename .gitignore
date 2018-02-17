@@ -1,5 +1,6 @@
 nist
 .idea/
+nist-classificator/src/nn/save
 
 
 # Created by https://www.gitignore.io/api/pycharm,pycharm+all,pycharm+iml
