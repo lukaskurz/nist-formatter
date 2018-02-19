@@ -1,5 +1,5 @@
 import numpy
-# import cudamat
+import cudamat as cm
 from scipy.special import expit
 import matplotlib.pyplot as plt
 import os
@@ -9,6 +9,7 @@ from threading import Thread
 from time import sleep
 import time
 from stopwatch import Timer
+from cudamat import CUDAMatrix as cudamatrix
 
 
 class Network:
@@ -32,10 +33,31 @@ class Network:
     def init_map(self):
         self.targets = {}
         for index in range(len(self.symbols)):
-            target = numpy.zeros(len(self.symbols))
-            target[index] = 1
-            target = (target + 0.01) * 0.99
+            target = numpy.ndarray((1, len(self.symbols)))
+            target.fill(0.001 * 0.999)
+            target[0][index] = 1.001 * 0.999
             self.targets.update({self.symbols[index]: target})
+
+    def train_gpu(self, start=numpy.empty(()), target=numpy.empty(())):
+        """Tries to predict the correct letter, compares with the target and changes weights using the error and GD"""
+        gpu_start = cudamatrix(start)
+        gpu_target = cudamatrix(target)
+        gpu_input_hidden = cudamatrix(self.input_hidden)
+        gpu_hidden_output = cudamatrix(self.hidden_output)
+
+        gpu_input_hidden_result = cm.exp(cm.dot(gpu_start, gpu_input_hidden))
+        gpu_hidden_output_result = cm.exp(cm.dot(gpu_input_hidden_result, gpu_hidden_output))
+
+        gpu_hidden_output_error = gpu_target.subtract(gpu_hidden_output_result)
+        gpu_input_hidden_error = cm.dot(gpu_hidden_output_error, gpu_hidden_output.transpose())
+
+        gpu_hidden_output.add(cm.dot(gpu_input_hidden_result.transpose(), gpu_hidden_output_error.mult(
+            gpu_hidden_output_result.subtract(cm.pow(gpu_hidden_output_result, 2)))).mult(self.learningrate))
+        gpu_input_hidden.add(cm.dot(gpu_start.transpose(), gpu_input_hidden_error.mult(
+            gpu_input_hidden_result.subtract(cm.pow(gpu_input_hidden_result, 2)))).mult(self.learningrate))
+
+        self.hidden_output = gpu_hidden_output.asarray()
+        self.input_hidden = gpu_input_hidden.asarray()
 
     def train(self, start=[], target=[]):
         """Tries to predict the correct letter, compares with the target and changes weights using the error and GD"""
@@ -46,14 +68,14 @@ class Network:
         input_hidden_error = numpy.dot(hidden_output_error, self.hidden_output.T)
 
         self.hidden_output += self.learningrate * numpy.dot(
-            input_hidden_result[:, None],
-            hidden_output_error[None, :] * hidden_output_result[None, :] * (1.0 - hidden_output_result[None, :]))
+            input_hidden_result.transpose(),
+            hidden_output_error * hidden_output_result * (1.0 - hidden_output_result))
 
         self.input_hidden += self.learningrate * numpy.dot(
-            start[:, None],
-            (input_hidden_error[None, :] * input_hidden_result[None, :] * (1.0 - input_hidden_result[None, :])))
+            start.transpose(),
+            (input_hidden_error * input_hidden_result * (1.0 - input_hidden_result)))
 
-    def predict(self, start=[]):
+    def predict(self, start):
         """Tries to predict from an image converted to an float array.
         Returns the prediction array"""
         input_hidden_result = expit(numpy.dot(start, self.input_hidden))
@@ -65,7 +87,7 @@ class Network:
         """Maps an hexadecimal ascii char to a result array"""
         return self.targets[symbol]
 
-    def unmapsymbol(self, result=[]):
+    def unmapsymbol(self, result):
         """Maps the result array to an ascii char"""
         biggest = 0
         for index in range(len(result)):
@@ -119,13 +141,16 @@ files = glob("./../../nist/by_class/*.csv")
 max_count = 60000.0
 current_count = 0.0
 running = True
-hypothesis = Network(0.1, 64 * 64, 10)
-hypothesis.import_weights()
+cm.init()
+hypothesis = Network(0.1, 64 * 64, 100)
+
+
+# hypothesis.import_weights()
 
 
 def write_progress():
     while running:
-        print(str(int(current_count / max_count * 100)) + "% ~ line " + str(int(current_count)))
+        print("%.2f" % (current_count / max_count * 100) + "% ~ line " + str(int(current_count)))
         sleep(1)
 
 
@@ -149,9 +174,9 @@ for file in files:
         input_data = (((numpy.asfarray(parts[1].split(","))
                         / 255)  # normalize to range of ]0;1[
                        + 0.01)  # so no 0 inputs exist
-                      * 0.99)  # no inputs bigger than 1
+                      * 0.99).reshape((1, -1))  # no inputs bigger than 1 and correct dim
 
-        hypothesis.train(input_data, target_data)
+        hypothesis.train_gpu(input_data, target_data)
 
     fp.flush()
     fp.close()
@@ -176,3 +201,4 @@ for i in range(1000):
     if correctResult == hypothesis.unmapsymbol(res):
         correct += 1.0
 print("Performance p: " + str(float(correct / 1000)))
+cm.shutdown()
