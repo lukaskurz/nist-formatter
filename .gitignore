@@ -1,4 +1,5 @@
 nist
+data
 .idea/
 src/nn/save/*
 

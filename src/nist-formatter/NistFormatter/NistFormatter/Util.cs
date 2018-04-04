@@ -56,11 +56,10 @@ namespace NistFormatter
 
 			return result;
 		}
-		private static Random rng = new Random();
 		public static void Shuffle<T>(this IList<T> list)
 		{
+			Random rng = new Random();
 			int n = list.Count;
-			Console.ForegroundColor = ConsoleColor.Yellow;
 			while (n > 1)
 			{
 				n--;
@@ -68,8 +67,14 @@ namespace NistFormatter
 				T value = list[k];
 				list[k] = list[n];
 				list[n] = value;
-				Console.WriteLine((100.0 - ((float)n / (float)list.Count * 100.0)).ToString());
 			}
+		}
+		public static void ClearCurrentConsoleLine()
+		{
+			int currentLineCursor = Console.CursorTop;
+			Console.SetCursorPosition(0, Console.CursorTop);
+			Console.Write(new string(' ', Console.WindowWidth));
+			Console.SetCursorPosition(0, currentLineCursor);
 		}
 	}
 }
