@@ -2,18 +2,16 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Drawing2D;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
 
 namespace NistFormatter
 {
-	class Program
-	{
-		static void Main(string[] args)
-		{
+    class Program
+    {
+        static void Main(string[] args)
+        {
 			Console.WriteLine("Hello");
 			Console.WriteLine("This is a formatter specially designed for the NIST Database 19");
 
@@ -98,13 +96,12 @@ namespace NistFormatter
 
 			Console.WriteLine("Normalizing files...");
 			var timer = Stopwatch.StartNew();
-			NormalizeFiles(files, nistPath, imageSize, limit);
+			NormalizeFiles(files.GetRange(1, 10000), nistPath, imageSize, limit);
 			timer.Stop();
 			Console.WriteLine("Finished normalizing files.");
 			Console.WriteLine($"Took {timer.Elapsed.Hours:00}:{timer.Elapsed.Minutes:00}:{timer.Elapsed.Seconds:00}:{timer.Elapsed.Milliseconds:00}");
 			Console.WriteLine("Press any key to close...");
 			Console.ReadKey();
-
 		}
 
 		private static string[] CheckForOldDirectories(string nistPath)
@@ -126,11 +123,11 @@ namespace NistFormatter
 			List<TestExample> files = new List<TestExample>();
 			foreach (var rootDirectory in rootDirectories)
 			{
-				string currentResult = Convert.ToChar(Convert.ToUInt32(rootDirectory.Split('\\').Last(),16)).ToString();
+				string currentResult = Convert.ToChar(Convert.ToUInt32(rootDirectory.Split('\\').Last(), 16)).ToString();
 				var subdirectories = Directory.GetDirectories(rootDirectory);
 				foreach (var subdirectory in subdirectories)
 				{
-					files.AddRange(Directory.GetFiles(subdirectory).Select(f => new TestExample(f,currentResult)));
+					files.AddRange(Directory.GetFiles(subdirectory).Select(f => new TestExample(f, currentResult)));
 				}
 			}
 
@@ -164,7 +161,7 @@ namespace NistFormatter
 				var active = new List<Thread>();
 				for (int i = 0; i < NUMBER_OF_PARALLEL_THREADS; i++)
 				{
-					if(threads.Count != 0)
+					if (threads.Count != 0)
 					{
 						var temp = threads.Dequeue();
 						temp.Start();
@@ -176,7 +173,7 @@ namespace NistFormatter
 					at.Join();
 				}
 				timer.Stop();
-				Console.WriteLine($"Finished threads in {timer.ElapsedMilliseconds/1000.0}s");
+				Console.WriteLine($"Finished threads in {timer.ElapsedMilliseconds / 1000.0}s");
 			}
 		}
 
