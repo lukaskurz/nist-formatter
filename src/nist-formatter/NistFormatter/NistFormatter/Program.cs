@@ -97,8 +97,12 @@ namespace NistFormatter
 			}
 
 			Console.WriteLine("Normalizing files...");
-			NormalizeFiles(files, nistPath, imageSize, limit);
+			var timer = Stopwatch.StartNew();
+			NormalizeFiles(files.GetRange(1,10000), nistPath, imageSize, limit);
+			timer.Stop();
 			Console.WriteLine("Finished normalizing files.");
+			Console.WriteLine($"Took {timer.Elapsed.Hours:00}:{timer.Elapsed.Minutes:00}:{timer.Elapsed.Seconds:00}:{timer.Elapsed.Milliseconds:00}");
+			Console.WriteLine("Press any key to close...");
 			Console.ReadKey();
 
 		}
@@ -135,6 +139,7 @@ namespace NistFormatter
 
 		private static void NormalizeFiles(List<TestExample> files, string nistPath, int imageSize, int limit)
 		{
+			const int NUMBER_OF_PARALLEL_THREADS = 4;
 			Queue<Thread> threads = new Queue<Thread>();
 			var numberOfFiles = files.Count / limit;
 			for (int i = 0; i < numberOfFiles; i++)
@@ -157,7 +162,7 @@ namespace NistFormatter
 				Console.WriteLine($"Starting new threads...");
 				var timer = Stopwatch.StartNew();
 				var active = new List<Thread>();
-				for (int i = 0; i < 4; i++)
+				for (int i = 0; i < NUMBER_OF_PARALLEL_THREADS; i++)
 				{
 					if(threads.Count != 0)
 					{
