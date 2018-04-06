@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Configuration;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -10,54 +11,40 @@ namespace NistFormatter
 {
     class Program
     {
-        static void Main(string[] args)
+		public static IConfiguration Configuration { get; set; }
+		static void Main(string[] args)
         {
+			var builder = new ConfigurationBuilder()
+				.SetBasePath(Directory.GetCurrentDirectory())
+				.AddJsonFile("appsettings.json");
+
+			Configuration = builder.Build();
+
 			Console.WriteLine("Hello");
 			Console.WriteLine("This is a formatter specially designed for the NIST Database 19");
 
-
-			string nistPath = "";
-			do
+			string nistPath = Configuration["nistpath"];
+			if (!Directory.Exists(nistPath))
 			{
-				Console.WriteLine("Please enter the path of the NIST Database 19 Directory:");
-				string path = Console.ReadLine();
-				if (Directory.Exists(path))
-				{
-					nistPath = path;
-					break;
-				}
-				Console.WriteLine("Path entered was invalid. Please Try again.");
-			} while (true);
+				throw new DirectoryNotFoundException("Nist directory not found");
+			}
 
 
 			Console.WriteLine("Searching for deprecated directories...");
 			var oldDirectories = CheckForOldDirectories(nistPath);
 
-
-			do
+			if (oldDirectories.Length > 0)
 			{
-				if (oldDirectories.Length == 0)
-				{
-					break;
-				}
-				Console.WriteLine($"{oldDirectories.Length} old directories found. Do you want to delete them (y/n)?");
-				string response = Console.ReadLine().ToLower();
-				if (response.StartsWith("y"))
+				Console.WriteLine($"{oldDirectories.Length} old directories found.");
+				if (Configuration["deleteDeprecatedDirectories"] == "true")
 				{
 					foreach (var oldDirectory in oldDirectories)
 					{
 						Console.WriteLine($"Deleting {oldDirectory}");
 						Directory.Delete(oldDirectory, true);
 					}
-					break;
 				}
-				else if (response.StartsWith("n"))
-				{
-					break;
-				}
-				Console.WriteLine("Invalid answer. Try again");
-			} while (true);
-
+			}
 
 			Console.WriteLine("Gathering paths of files...");
 			var files = GetAllFiles(nistPath);
@@ -69,34 +56,22 @@ namespace NistFormatter
 			Console.WriteLine("Finished randomizing.");
 
 
-			Console.WriteLine("Due to problems with big files, the data is split into multiple files.");
-			int limit = -1;
-			bool isNumber = false;
-			while (!isNumber)
-			{
-				Console.WriteLine("How many test examples should be grouped together into one file?");
-				isNumber = Int32.TryParse(Console.ReadLine(), out limit);
-				if (!isNumber)
-				{
-					Console.WriteLine("Invalid number. Try again.");
-				}
-			}
+			int limit = Convert.ToInt32(Configuration["examplesPerFile"]);
 
-			int imageSize = -1;
-			isNumber = false;
-			while (!isNumber)
-			{
-				Console.WriteLine("What should be the size of the quadratic Images (in pixels)?");
-				isNumber = Int32.TryParse(Console.ReadLine(), out imageSize);
-				if (!isNumber)
-				{
-					Console.WriteLine("Invalid number. Try again.");
-				}
-			}
+			int imageSize = Convert.ToInt32(Configuration["pictureSize"]);
 
 			Console.WriteLine("Normalizing files...");
 			var timer = Stopwatch.StartNew();
-			NormalizeFiles(files.GetRange(1, 10000), nistPath, imageSize, limit);
+			var subsetSize = Convert.ToInt32(Configuration["subsetSize"]);
+			if(subsetSize < 0)
+			{
+				NormalizeFiles(files, nistPath, imageSize, limit);
+			}
+			else
+			{
+				NormalizeFiles(files.GetRange(1, subsetSize), nistPath, imageSize, limit);
+			}
+			
 			timer.Stop();
 			Console.WriteLine("Finished normalizing files.");
 			Console.WriteLine($"Took {timer.Elapsed.Hours:00}:{timer.Elapsed.Minutes:00}:{timer.Elapsed.Seconds:00}:{timer.Elapsed.Milliseconds:00}");
@@ -136,7 +111,7 @@ namespace NistFormatter
 
 		private static void NormalizeFiles(List<TestExample> files, string nistPath, int imageSize, int limit)
 		{
-			const int NUMBER_OF_PARALLEL_THREADS = 4;
+			int numberOfParallelThreads = Convert.ToInt32(Configuration["numberOfParallelThreads"]);
 			Queue<Thread> threads = new Queue<Thread>();
 			var numberOfFiles = files.Count / limit;
 			for (int i = 0; i < numberOfFiles; i++)
@@ -159,7 +134,7 @@ namespace NistFormatter
 				Console.WriteLine($"Starting new threads...");
 				var timer = Stopwatch.StartNew();
 				var active = new List<Thread>();
-				for (int i = 0; i < NUMBER_OF_PARALLEL_THREADS; i++)
+				for (int i = 0; i < numberOfParallelThreads; i++)
 				{
 					if (threads.Count != 0)
 					{
