@@ -69,7 +69,7 @@ namespace NistFormatter
 			}
 			else
 			{
-				NormalizeFiles(files.GetRange(1, subsetSize), nistPath, imageSize, limit);
+				NormalizeFiles(files.GetRange(1, Math.Min(subsetSize,files.Count)), nistPath, imageSize, limit);
 			}
 			
 			timer.Stop();
@@ -86,7 +86,7 @@ namespace NistFormatter
 			foreach (var rootDirectory in rootDirectories)
 			{
 				var directories = Directory.GetDirectories(rootDirectory).ToList();
-				oldDirectories.AddRange(directories.Where(d => d.Split('\\').Last().StartsWith("train")));
+				oldDirectories.AddRange(directories.Where(d => d.Split(Path.DirectorySeparatorChar).Last().StartsWith("train")));
 			}
 
 			return oldDirectories.ToArray();
@@ -98,7 +98,7 @@ namespace NistFormatter
 			List<TestExample> files = new List<TestExample>();
 			foreach (var rootDirectory in rootDirectories)
 			{
-				string currentResult = Convert.ToChar(Convert.ToUInt32(rootDirectory.Split('\\').Last(), 16)).ToString();
+				string currentResult = Convert.ToChar(Convert.ToUInt32(rootDirectory.Split(Path.DirectorySeparatorChar).Last(), 16)).ToString();
 				var subdirectories = Directory.GetDirectories(rootDirectory);
 				foreach (var subdirectory in subdirectories)
 				{
