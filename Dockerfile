@@ -4,7 +4,8 @@ WORKDIR /opt/nist-formatter
 
 COPY ./src /opt/nist-formatter/src
 
-RUN apt-get install -y wget unzip &&\
+RUN apt-get update && apt-get install -y unzip &&\
+	apt-get update && apt-get install -y wget &&\
 	wget -O data.zip https://nist-database19.ams3.digitaloceanspaces.com/by_class.zip &&\
 	unzip data.zip &&\
 	rm data.zip &&\
