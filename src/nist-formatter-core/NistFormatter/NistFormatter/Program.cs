@@ -69,7 +69,7 @@ namespace NistFormatter
 			}
 			else
 			{
-				NormalizeFiles(files.GetRange(1, Math.Min(subsetSize,files.Count)), nistPath, imageSize, limit);
+				NormalizeFiles(files.GetRange(0, Math.Min(subsetSize,files.Count)), nistPath, imageSize, limit);
 			}
 			
 			timer.Stop();
