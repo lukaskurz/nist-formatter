@@ -7,7 +7,7 @@ COPY ./src /opt/nist-formatter/src
 RUN apt-get update && apt-get install -y unzip &&\
 	apt-get update && apt-get install -y wget &&\
 	apt-get update && apt-get install -y libgdiplus &&\
-	wget -O data.zip https://ams3.digitaloceanspaces.com/nist-database19/by_class_small_fixed.zip &&\
+	wget -O data.zip https://ams3.digitaloceanspaces.com/nist-database19/by_class.zip &&\
 	unzip -q data.zip &&\
 	rm data.zip &&\
 	mv ./by_class ./data &&\
