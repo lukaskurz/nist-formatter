@@ -75,8 +75,6 @@ namespace NistFormatter
 			timer.Stop();
 			Console.WriteLine("Finished normalizing files.");
 			Console.WriteLine($"Took {timer.Elapsed.Hours:00}:{timer.Elapsed.Minutes:00}:{timer.Elapsed.Seconds:00}:{timer.Elapsed.Milliseconds:00}");
-			Console.WriteLine("Press any key to close...");
-			Console.ReadKey();
 		}
 
 		private static string[] CheckForOldDirectories(string nistPath)
