@@ -7,6 +7,13 @@ namespace NistFormatter
 {
 	static class Util
 	{
+        /// <summary>
+        /// Resizes an image
+        /// </summary>
+        /// <param name="bmp">the image to be resized</param>
+        /// <param name="size">New size of the image</param>
+        /// <param name="preserveAspectRatio"></param>
+        /// <returns></returns>
 		public static Bitmap Resize(this Bitmap bmp, Size size, bool preserveAspectRatio = true)
 		{
 			int newWidth;
@@ -35,6 +42,11 @@ namespace NistFormatter
 			return newBmp;
 		}
 
+        /// <summary>
+        /// Applies grayscale to an image, flattens it to an array and writes it to a string as comma seperated values.
+        /// </summary>
+        /// <param name="bmp">The image that will be normalized</param>
+        /// <returns></returns>
 		public static string Normalize(this Bitmap bmp)
 		{
 			string result = "";
@@ -52,6 +64,12 @@ namespace NistFormatter
 
 			return result;
 		}
+
+        /// <summary>
+        /// Randomly shuffles the a list
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list"></param>
 		public static void Shuffle<T>(this IList<T> list)
 		{
 			Random rng = new Random();
@@ -64,13 +82,6 @@ namespace NistFormatter
 				list[k] = list[n];
 				list[n] = value;
 			}
-		}
-		public static void ClearCurrentConsoleLine()
-		{
-			int currentLineCursor = Console.CursorTop;
-			Console.SetCursorPosition(0, Console.CursorTop);
-			Console.Write(new string(' ', Console.WindowWidth));
-			Console.SetCursorPosition(0, currentLineCursor);
 		}
 	}
 }
