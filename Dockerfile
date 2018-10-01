@@ -3,6 +3,7 @@ FROM microsoft/dotnet:2.0-sdk as builder
 WORKDIR /opt/nist-formatter
 
 COPY ./src /opt/nist-formatter/src
+COPY ./appsettings.json /opt/nist-formatter/src/nist-formatter-core/NistFormatter/NistFormatter/appsettings.json
 
 RUN dotnet publish -c Release -r ubuntu.16.04-x64 -o ./publish ./src/nist-formatter-core/NistFormatter &&\
 	chmod 777 ./src/nist-formatter-core/NistFormatter/NistFormatter/publish/NistFormatter
