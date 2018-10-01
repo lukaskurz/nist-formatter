@@ -11,11 +11,14 @@ FROM ubuntu:latest as downloader
 
 WORKDIR /opt/download
 
-RUN apt-get update && apt-get install -y unzip &&\
-	apt-get update && apt-get install -y wget &&\
+RUN echo -e "\n${GREEN}INSTALLING ADDITIONAL TOOLS${NC}\n" &&\
+	apt-get update && apt-get install -y curl &&\
 	apt-get update && apt-get install -y libgdiplus &&\
-	wget -O data.zip https://ams3.digitaloceanspaces.com/nist-database19/by_class.zip &&\
-	unzip -q data.zip &&\
+	apt-get update && apt-get install -y pv &&\
+	echo -e "\n${GREEN}DOWNLOADING THE COMPRESSED DATASET${NC}\n" &&\
+	curl -o data.zip https://ams3.digitaloceanspaces.com/nist-database19/by_class.zip --progress-bar &&\
+	echo -e "\n${GREEN}DECOMPRESSING THE DATASET${NC}\n" &&\
+	unzip data.zip | pv -l >/dev/null &&\
 	rm data.zip &&\
 	mv ./by_class ./data
 
