@@ -1,6 +1,6 @@
 # NistFormatter
 
-NistFormatter is a tool for designed for machine learning applications and projects that want to work with the [NIST Special Database 19](https://www.nist.gov/srd/nist-special-database-19). The tool applies a grayscale to the images, resizes them and writes them in a flattened, comma-seperated format into multiple .csv files.
+NistFormatter is a tool designed for machine learning applications and projects that want to work with the [NIST Special Database 19](https://www.nist.gov/srd/nist-special-database-19). The tool applies a grayscale to the images, resizes them and writes them in a flattened, comma-seperated format into multiple .csv files.
 
 ## Architecture
 The NistFormatter is implemented once in .Net Framework and once in .Net Core. For deployment docker is used.
