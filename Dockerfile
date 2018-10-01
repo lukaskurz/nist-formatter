@@ -15,11 +15,10 @@ RUN echo -e "\nINSTALLING ADDITIONAL TOOLS\n" &&\
 	apt-get update && apt-get install -y curl &&\
 	apt-get update && apt-get install -y libgdiplus &&\
 	apt-get update && apt-get install -y unzip &&\
-	apt-get update && apt-get install -y pv &&\
 	echo "\nDOWNLOADING THE COMPRESSED DATASET\n" &&\
 	curl -o data.zip https://ams3.digitaloceanspaces.com/nist-database19/by_class.zip --progress-bar &&\
 	echo "\nDECOMPRESSING THE DATASET\n" &&\
-	unzip data.zip | pv -l >/dev/null &&\
+	unzip data.zip &&\
 	rm data.zip &&\
 	mv ./by_class ./data
 
