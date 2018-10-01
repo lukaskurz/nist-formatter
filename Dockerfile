@@ -30,6 +30,6 @@ WORKDIR /opt/nist-formatter
 COPY --from=builder /opt/nist-formatter/src/nist-formatter-core/NistFormatter/NistFormatter/publish ./
 COPY --from=downloader /opt/download/data ./data
 
-RUN chmod 777 ./nist-formatter/NistFormatter
+RUN chmod 777 ./NistFormatter
 
-CMD ./nist-formatter/NistFormatter
+CMD ./NistFormatter
